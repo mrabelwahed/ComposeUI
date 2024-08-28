@@ -34,12 +34,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavArgument
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -51,12 +56,18 @@ import com.droidcourses.composeui.basics.MyIcon
 import com.droidcourses.composeui.basics.MyIcon2
 import com.droidcourses.composeui.basics.MyText
 import com.droidcourses.composeui.canvas.InstagramLogo
+import com.droidcourses.composeui.datetime.play1
+import com.droidcourses.composeui.datetime.play2
+import com.droidcourses.composeui.datetime.play3
 import com.droidcourses.composeui.navigation.DPage1
 import com.droidcourses.composeui.navigation.DPage2
 import com.droidcourses.composeui.navigation.NPage1
 import com.droidcourses.composeui.navigation.NPage2
 import com.droidcourses.composeui.navigation.Page1
 import com.droidcourses.composeui.navigation.Page2
+import com.droidcourses.composeui.notification.NotificationViewModel
+import com.droidcourses.composeui.stopwatch.MainScreen
+import com.droidcourses.composeui.stopwatch.StopWatchService
 import com.droidcourses.composeui.ui.theme.ComposeUITheme
 import com.droidcourses.composeui.ui.themechanger.settings.UserSettings
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,13 +77,37 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var userSettings: UserSettings
-
+    var isBound: Boolean by  mutableStateOf(false)
+    lateinit var stopWatchService: StopWatchService
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
-
+            val viewModel: NotificationViewModel = hiltViewModel()
+            ComposeUITheme {
+                if (isBound)
+                 MainScreen(stopWatchService)
+            }
+//            ComposeUITheme {
+//                Column(
+//                    modifier = Modifier.fillMaxSize(),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                    ) {
+//                    Button(onClick = viewModel::showNormalNotification) {
+//                        Text(text = "show normal notification")
+//                    }
+//                    Button(onClick = viewModel::updateNotification) {
+//                        Text(text = "update notification")
+//                    }
+//
+//                    Button(onClick = viewModel::cancelNotification) {
+//                        Text(text = "cancel notification")
+//                    }
+//                }
+//            }
 //            val theme = userSettings.themeStream.collectAsState()
 //
 //            val useDarkColors: Boolean = when (theme.value) {
@@ -81,35 +116,39 @@ class MainActivity : ComponentActivity() {
 //                AppThemMode.Mode_Auto -> isSystemInDarkTheme()
 //            }
 
-            ComposeUITheme(darkTheme = false) {
-                val navHostController = rememberNavController()
-                NavHost(navHostController, "page1") {
-                    composable("page1") {
-                        NPage1(navHostController, modifier = Modifier.fillMaxSize())
-                    }
-                    composable("page2/{money}?bouns={bouns}", arguments = listOf(
-                        navArgument("money") {
-                            type = NavType.IntType
-                        },
-                        navArgument("bouns") {
-                            type = NavType.IntType
-                            defaultValue = 2407
-                        }
-                    )) { backStackEntry ->
-                        NPage2(navHostController,
-                            backStackEntry.arguments?.getInt("money"),
-                            backStackEntry.arguments?.getInt("bouns"),
-                            modifier = Modifier.fillMaxSize())
-                    }
-                }
-            }
+//            ComposeUITheme(darkTheme = false) {
+//                val navHostController = rememberNavController()
+//                NavHost(navHostController, "page1") {
+//                    composable("page1") {
+//                        NPage1(navHostController, modifier = Modifier.fillMaxSize())
+//                    }
+//                    composable("page2/{money}?bouns={bouns}", arguments = listOf(
+//                        navArgument("money") {
+//                            type = NavType.IntType
+//                        },
+//                        navArgument("bouns") {
+//                            type = NavType.IntType
+//                            defaultValue = 2407
+//                        }
+//                    )) { backStackEntry ->
+//                        NPage2(navHostController,
+//                            backStackEntry.arguments?.getInt("money"),
+//                            backStackEntry.arguments?.getInt("bouns"),
+//                            modifier = Modifier.fillMaxSize())
+//                    }
+//                }
+//            }
         }
     }
 
 
-    @Composable
-    fun Greeting(name: String, modifier: Modifier = Modifier) {
-        MyText(name)
+    override fun onStart() {
+        super.onStart()
+        play3()
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 
     @Preview(showBackground = true, showSystemUi = true)
