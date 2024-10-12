@@ -2,7 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias (libs.plugins.hilt)
-    alias(libs.plugins.kapt)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp.plugin)
+//    id("com.google.devtools.ksp")
 }
 
 android {
@@ -42,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.2"
     }
     packaging {
         resources {
@@ -74,6 +76,6 @@ dependencies {
 
 
     implementation(libs.bundles.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation (libs.kotlinx.datetime)
 }
