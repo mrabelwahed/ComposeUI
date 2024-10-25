@@ -9,7 +9,9 @@ import DrawLine1
 import DrawLine2
 import DrawMultipleLines
 import DrawPieChart
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.graphics.Paint
 import android.os.Bundle
 import android.widget.GridLayout.Spec
@@ -44,6 +46,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavArgument
 import androidx.navigation.NavType
@@ -55,6 +59,7 @@ import com.droidcourses.composeui.basics.MyButton
 import com.droidcourses.composeui.basics.MyIcon
 import com.droidcourses.composeui.basics.MyIcon2
 import com.droidcourses.composeui.basics.MyText
+import com.droidcourses.composeui.camera.presentation.CameraScreen
 import com.droidcourses.composeui.canvas.InstagramLogo
 import com.droidcourses.composeui.datetime.play1
 import com.droidcourses.composeui.datetime.play2
@@ -66,6 +71,7 @@ import com.droidcourses.composeui.navigation.NPage2
 import com.droidcourses.composeui.navigation.Page1
 import com.droidcourses.composeui.navigation.Page2
 import com.droidcourses.composeui.notification.NotificationViewModel
+import com.droidcourses.composeui.photopicker.MultiplePhotoPicker
 import com.droidcourses.composeui.stopwatch.MainScreen
 import com.droidcourses.composeui.stopwatch.StopWatchService
 import com.droidcourses.composeui.ui.theme.ComposeUITheme
@@ -73,6 +79,10 @@ import com.droidcourses.composeui.ui.themechanger.settings.UserSettings
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+val requiredPermissions = arrayOf(
+    Manifest.permission.CAMERA,
+    Manifest.permission.RECORD_AUDIO
+)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
@@ -83,12 +93,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if(!arePermissionsGranted()) {
+            ActivityCompat.requestPermissions(this, requiredPermissions,100)
+        }
+
         enableEdgeToEdge()
         setContent {
-            val viewModel: NotificationViewModel = hiltViewModel()
+//            val viewModel: NotificationViewModel = hiltViewModel()
             ComposeUITheme {
-                if (isBound)
-                 MainScreen(stopWatchService)
+                CameraScreen(modifier = Modifier.fillMaxSize(), this)
+//                if (isBound)
+//                 MainScreen(stopWatchService)
             }
 //            ComposeUITheme {
 //                Column(
@@ -142,14 +157,21 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        play3()
+//    override fun onStart() {
+//        super.onStart()
+//        play3()
+//    }
+//
+//    override fun onStop() {
+//        super.onStop()
+//    }
+
+    private fun arePermissionsGranted(): Boolean {
+       return requiredPermissions.all { permission ->
+            ContextCompat.checkSelfPermission(applicationContext,permission) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
 
     @Preview(showBackground = true, showSystemUi = true)
     @Composable

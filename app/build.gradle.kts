@@ -4,7 +4,6 @@ plugins {
     alias (libs.plugins.hilt)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp.plugin)
-//    id("com.google.devtools.ksp")
 }
 
 android {
@@ -54,7 +53,6 @@ android {
 }
 
 dependencies {
-//    implementation("androidx.appcompat:appcompat:1.2.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -78,4 +76,12 @@ dependencies {
     implementation(libs.bundles.hilt)
     ksp(libs.hilt.compiler)
     implementation (libs.kotlinx.datetime)
+
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.video)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.extensions)
+    implementation(libs.coil.compose)
 }
